@@ -1,19 +1,23 @@
 import { remark } from 'remark'
 import html from 'remark-html'
-import getPosts from '@/components/utils/getPosts'
-import getPostContent from '@/components/utils/getPostContent'
-import { PostParams } from '@/components/PostInterfaces'
+import { PostClass } from '@/components/utils/PostClass'
+import { PostParams } from '@/components/utils/PostInterfaces'
 
 export const generateStaticParams = async () => {
-	const posts = getPosts()
+	const PostHelper = new PostClass()
+
+	const posts = PostHelper.getAllPosts()
 	return posts.map(post => ({
 		slug: post.slug,
 	}))
 }
 
 export default async function Post({ params }: PostParams) {
+	const PostHelper = new PostClass()
+
 	const { slug } = params
-	const post = getPostContent(slug)
+	const post = PostHelper.getPostContent(slug)
+
 	const processedContent = await remark().use(html).process(post.content)
 	const contentHtml = processedContent.toString()
 	console.log(post)
